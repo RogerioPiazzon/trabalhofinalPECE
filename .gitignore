@@ -1,3 +1,3 @@
-database
-data
-models
+app\dados\db
+app\dados\rawfiles
+doc
