@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 /app/dados/db
 /app/dados/rawfiles
 /doc
+=======
+database\db
+data
+>>>>>>> refs/remotes/origin/main
