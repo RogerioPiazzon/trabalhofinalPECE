@@ -27,7 +27,7 @@ class generate_files_config():
 
         if not os.path.exists(path.join(self.root_path ,r"dados\ddl\create_tables.sql")) or \
             not os.path.exists(path.join(self.root_path ,r"configuracao\rawfiles\Metadados_preenchido.xlsx")) or \
-            not os.path.exists(path.join(self.root_path ,r"dados\db\dbo2.db")): 
+            not os.path.exists(path.join(self.root_path ,r"dados\db\dbo.db")): 
             print("Não foi possivel criar o arquivo solicitado")
             return None
     
@@ -59,7 +59,7 @@ class generate_files_config():
 
         df = pd.read_excel(path.join(self.root_path ,r"configuracao\rawfiles\Metadados_preenchido.xlsx"),sheet_name="Resumo das tabelas")
 
-        conn = sqlite3.connect(path.join(self.root_path ,r"dados\db\dbo2.db"))
+        conn = sqlite3.connect(path.join(self.root_path ,r"dados\db\dbo.db"))
         metadata_json = dict()
         for i,row in df.iterrows():
             metadata_json.update({row["Nome"]:{nm:vl if vl else "" for nm,vl in row.items() if nm != "Nome"} })
@@ -75,7 +75,7 @@ class generate_files_config():
                 for coluna in lista_unique:
                     unique_by_col_sql = pd.read_sql(f"""SELECT DISTINCT {coluna} FROM {row["Nome"]}""",conn)
                     metadata_json[row["Nome"]]['Colunas'][coluna].update({"Valores Possíveis":unique_by_col_sql[coluna].values.tolist()}) 
-        path.join(self.root_path ,r"dados\db\dbo2.db")
+        path.join(self.root_path ,r"dados\db\dbo.db")
         with open(path.join(self.root_path ,r"configuracao\files\dicionario_dados.json"), "w") as outfile: 
             json.dump(metadata_json, outfile)
 

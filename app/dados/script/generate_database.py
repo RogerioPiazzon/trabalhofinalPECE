@@ -48,7 +48,7 @@ class replicate_adventureworksdw():
 
         conn.commit()
         conn.close()
-
+        total_rows = 0
         conn = sqlite3.connect(path.join(self.root_path ,r"dados\db\dbo.db"))
         dir_list = glob.glob("{}/*.csv".format(path.join(self.root_path ,r"dados\rawfiles")))
         self.app_log(0,"Carga de dados no banco de dados")
@@ -71,6 +71,7 @@ class replicate_adventureworksdw():
             df_obj = df.select_dtypes('object')
             df[df_obj.columns] = df_obj.apply(lambda x: x.str.strip())
             self.app_log(2,"Carregando {} - {} linhas".format(arq[:-4],df.shape[0]))
+            total_rows += df.shape[0]
             df.to_sql(arq[5:-4],conn,if_exists='append',index=False)
 
         self.app_log(1,"Tabelas Fato")
@@ -88,7 +89,8 @@ class replicate_adventureworksdw():
             df_obj = df.select_dtypes('object')
             df[df_obj.columns] = df_obj.apply(lambda x: x.str.strip())
 
-            self.app_log(2,"Carregando {} - {} linhas".format(arq[5:-4],df.shape[0]))
+            self.app_log(2,"Carregando {} - {} linhas".format(arq[:-4],df.shape[0]))
+            total_rows += df.shape[0]
             df.to_sql(arq[5:-4],conn,if_exists='append',index=False)
 
         self.app_log(1,"Demais Tabelas ")
@@ -111,6 +113,7 @@ class replicate_adventureworksdw():
                 df_obj = df.select_dtypes('object')
                 df = df.apply(lambda x: x.str.strip(),axis=1)
                 self.app_log(2,"Carregando {} - {} linhas".format(arq[:-4],df.shape[0]))
+                total_rows += df.shape[0]
                 df.to_sql(arq[5:-4],conn,if_exists='append',index=False)
             except:
                 df = pd.read_csv(path.join(self.root_path ,r"dados\rawfiles",arq),sep="|",
@@ -120,9 +123,11 @@ class replicate_adventureworksdw():
                 df_obj = df.select_dtypes('object')
                 df[df_obj.columns] = df_obj.apply(lambda x: x.str.strip())
                 self.app_log(2,"Carregando {} - {} linhas".format(arq[:-4],df.shape[0]))
+                total_rows += df.shape[0]
                 df.to_sql(arq[5:-4],conn,if_exists='append',index=False)
 
         conn.close()
+        print(total_rows)
 
 if __name__ == "__main__":
     root_path =  path.abspath(path.join(__file__ ,"../../.."))
